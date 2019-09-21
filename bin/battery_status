@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Bash-modified version of the battery status scritp.
+# Credits: https://www.reddit.com/r/UsabilityPorn/comments/cohogi/usability_tip_hack_together_a_low_battery_warning/
+
+# If charging, exit
+[ "$(cat /sys/class/power_supply/BAT0/status)" = "Charging" ] && exit
+
+# set -x DISPLAY :0
+
+# Current battery percentage
+BAT=$(cat /sys/class/power_supply/BAT0/capacity)
+
+battery_prompt() {
+	local status_id=$1
+	local urgency=$2
+	# local icon=$
+	local text=$3
+
+    # Exit function if user has seen this dialog
+    current_status_id=$(cat /tmp/battery_status 2> /dev/null)
+    [ "$status_id" -eq "$current_status_id" ] && return
+
+    dunstify --appname=WARNING \
+			 --replace="$status_id" \
+			 --urgency="$urgency" \
+			 # --icon="$icon" \
+			 "$text" 
+}
+
+if [ $BAT -le 5 ]; then
+    battery_prompt 3 "critical" "Battery is critically low!" # battery-empty
+    echo "3" > /tmp/battery_status
+elif [ $BAT -le 10 ]; then
+    battery_prompt 2 "critical" "Battery is at 10%." # battery-low
+    echo "2" > /tmp/battery_status
+elif [ $BAT -le 20 ]; then
+    battery_prompt 1 "normal" "Battery is at 20%." # battery-low
+    echo "1" > /tmp/battery_status
+else
+    echo "0" > /tmp/battery_status
+fi

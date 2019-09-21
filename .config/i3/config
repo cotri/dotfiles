@@ -1,0 +1,293 @@
+#  ██╗██████╗      ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ 
+#  ██║╚════██╗    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ 
+#  ██║ █████╔╝    ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+#  ██║ ╚═══██╗    ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+#  ██║██████╔╝    ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+#  ╚═╝╚═════╝      ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
+
+## Variables
+
+	# Mod key (Mod1=Alt, Mod4=Win)
+	set $mod Mod4
+
+	# Abreviations
+	set $id --no-startup-id
+	set $exec exec $id
+	
+	# Terminals
+	set $term1 urxvtc
+	set $term2 termite
+	set $term3 st
+
+	# Wallpapers
+	set $wallpaper ~/Imágenes/wallpapers/alena-aenami-serenity-1k.jpg
+	set $wallpaper_lock ~/Imágenes/wallpapers/alena-aenami-stay-1k.jpg
+		# away-1k.jpg
+		# atlast2k2.jpg
+
+	# Font
+	set $font "UbuntuMono Nerd Font Mono"
+	
+	# Colors
+	set $bg-color 	         #2f343f
+	set $inactive-bg-color   #2f343f
+	set $text-color          #99CCFF
+	set $inactive-text-color #676E7D
+	set $urgent-bg-color     #2f343f
+	set $windowcolor	 	 #A11581
+	
+	# Define names for default workspaces for which we configure key bindings later on.
+	set $ws1 "1"
+	set $ws2 "2"
+	set $ws3 "3"
+	set $ws4 "4"
+	set $ws5 "5"
+	set $ws6 "6"
+	set $ws7 "7"
+	set $ws8 "8"
+	set $ws9 "9"
+	set $ws10 "10"
+
+## Aplication rules
+
+	# Urxvt
+	for_window [class="^URxvt$" instance="floating_urxvt$"] floating enable
+	
+	# Firefox
+	assign [window_role="browser"] $ws2
+	# assign [class="^Navigator$" instance="^firefox$"] → number 2
+	# for_window [class="^Navigator$" instance="^firefox$"] layout tabbed
+	# for_window [class="firefox" title=".*\((Navegación privada)\).*"] layout tabbed
+
+## Settings
+
+	# Font for window titles
+	font pango:$font 11
+	
+	# Use Mouse+$mod to drag floating windows to their wanted position
+	floating_modifier $mod
+	
+	# Gaps and borders
+	smart_gaps on
+	smart_borders on
+	gaps inner 15
+	gaps outer 0
+	
+	# Set min and max floating window size (max value: -1)
+	floating_minimum_size 80 x 24
+	floating_maximum_size -1 x -1
+	
+	# Default window borders: remove top title bar
+	default_border pixel 2
+	default_floating_border pixel 1
+	
+	# Hide screen edge adjacent borders
+	hide_edge_borders smart
+	
+	#code                   border              background         text                  indicator
+	client.focused          $bg-color           #7401DF            $text-color           #FF3CFF
+	client.unfocused        $inactive-bg-color  $inactive-bg-color $inactive-text-color  #FF3CFF
+	client.focused_inactive $inactive-bg-color  $inactive-bg-color $inactive-text-color  #FF3CFF
+	client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color           #FF3CFF
+	
+## Start-up applications
+
+	# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
+	# screen before suspend. Default: i3lock --nofork
+	$exec xss-lock --transfer-sleep-lock -- lockscript $wallpaper_lock
+	
+	# NetworkManager is the most popular way to manage wireless networks on Linux,
+	# and nm-applet is a desktop environment-independent system tray GUI for it.
+	# $exec nm-applet
+	
+	# Set wallpaper
+	exec_always $id feh --bg-fill $wallpaper 
+	
+	# Launch polybar
+	$exec launch.sh
+
+	# Launched at i3 start-up
+	$exec $term1 -name floating_urxvt -geometry 110x35
+	$exec firefox
+
+## Key bindings
+
+	## Navigation and movement related
+	
+	# change focus
+	bindsym $mod+h focus left
+	bindsym $mod+j focus down
+	bindsym $mod+k focus up
+	bindsym $mod+l focus right
+	
+	# move focused window
+	bindsym $mod+Shift+h move left
+	bindsym $mod+Shift+j move down
+	bindsym $mod+Shift+k move up
+	bindsym $mod+Shift+l move right
+	
+	# split in horizontal orientation
+	# bindsym $mod+h split h
+	
+	# split in vertical orientation
+	bindsym $mod+v split toggle
+	
+	# change container layout (stacked, tabbed, toggle split)
+	# bindsym $mod+s layout stacking
+	# bindsym $mod+w layout tabbed
+	bindsym $mod+w layout toggle
+	bindsym $mod+s layout toggle split
+	
+	# enter fullscreen mode for the focused container
+	bindsym $mod+f fullscreen toggle
+	
+	# toggle tiling / floating
+	bindsym $mod+Shift+space floating toggle
+	
+	# change focus between tiling / floating windows
+	bindsym $mod+space focus mode_toggle
+	
+	# Move floating container to the center of the screen (absolute position)
+	bindsym $mod+c move position center 
+	
+	# Center floating container and resize it
+	bindsym $mod+Shift+d resize set 800 px 600 px, move position center
+	
+	# focus the parent container
+	bindsym $mod+a focus parent
+	
+	# focus the child container
+	#bindsym $mod+d focus child
+	
+	# kill focused window
+	bindsym $mod+Shift+q kill
+	
+	# switch to workspace
+	bindsym $mod+1 workspace $ws1
+	bindsym $mod+2 workspace $ws2
+	bindsym $mod+3 workspace $ws3
+	bindsym $mod+4 workspace $ws4
+	bindsym $mod+5 workspace $ws5
+	bindsym $mod+6 workspace $ws6
+	bindsym $mod+7 workspace $ws7
+	bindsym $mod+8 workspace $ws8
+	bindsym $mod+9 workspace $ws9
+	bindsym $mod+0 workspace $ws10
+	
+	# move focused container to workspace
+	bindsym $mod+Shift+1 move container to workspace $ws1
+	bindsym $mod+Shift+2 move container to workspace $ws2
+	bindsym $mod+Shift+3 move container to workspace $ws3
+	bindsym $mod+Shift+4 move container to workspace $ws4
+	bindsym $mod+Shift+5 move container to workspace $ws5
+	bindsym $mod+Shift+6 move container to workspace $ws6
+	bindsym $mod+Shift+7 move container to workspace $ws7
+	bindsym $mod+Shift+8 move container to workspace $ws8
+	bindsym $mod+Shift+9 move container to workspace $ws9
+	bindsym $mod+Shift+0 move container to workspace $ws10
+	
+	# resize window (you can also use the mouse for that)
+	mode "resize" {
+	        bindsym h resize shrink width 5 px or 5 ppt
+	        bindsym j resize grow height 5 px or 5 ppt
+	        bindsym k resize shrink height 5 px or 5 ppt
+	        bindsym l resize grow width 5 px or 5 ppt
+	
+	        # back to normal: Enter or Escape or $mod+r
+	        bindsym Return mode "default"
+	        bindsym Escape mode "default"
+	        bindsym $mod+r mode "default"
+	}
+	
+	bindsym $mod+r mode "resize"
+	
+	# Cycle workspaces
+	bindsym $mod+Tab workspace back_and_forth
+	bindsym $mod+q workspace next
+
+	## i3 related
+	
+	# reload the configuration file
+	bindsym $mod+Shift+c reload
+	# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+	bindsym $mod+Shift+r restart
+	# exit i3 (logs you out of your X session)
+	# bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+	
+	# Start i3bar to display a workspace bar (plus the system information i3status
+	# finds out, if available)
+	# bar {
+	# 	status_command i3blocks -c ~/.config/i3blocks/config
+	# 	position top
+	# 	font pango:FontAwesome 20, pango:$font 9
+	# 	
+	# 	# Do not display i3bar when hiden by pressing Mod4
+	# 	modifier none
+	# 
+	# 	# Show tray icons on primary disp
+	# 	tray_output primary
+	# }
+	
+	# Toggle i3bar visibility
+	# bindsym $mod+b bar mode toggle
+	
+	## Aplication related
+
+	# Start terminal emulators
+	bindsym $mod+Return $exec $term1
+	bindsym $mod+Shift+Return $exec $term1 -name floating_urxvt -geometry 80x26
+	bindsym $mod+Control+Return $exec $term3
+	
+	# Start dmenu
+	bindsym $mod+d $exec dmenu_run_history -nb '#161616' -nf '#f1ebeb' -fn 'pango:$font:size=11'
+	
+	# Use pactl to adjust volume in PulseAudio.
+	bindsym $mod+Up $exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+	bindsym $mod+Down $exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+	bindsym $mod+Shift+Down $exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+		# XF86AudioRaiseVolume 
+		# XF86AudioLowerVolume
+		# XF86AudioMute
+		# bindsym $mod+Up $exec volume up
+		# bindsym $mod+Down $exec volume down
+		# bindsym $mod+Shift+Down $exec volume mute
+	
+	# Toggle polybar visibility
+	bindsym $mod+b $exec polybar-msg -p $(pgrep polybar) cmd toggle
+	
+	# Make the currently focused window a scratchpad
+	bindsym $mod+Shift+minus move scratchpad
+	
+	# Show the first scratchpad window
+	bindsym $mod+minus scratchpad show
+	
+	# Show the sup-mail scratchpad window, if any.
+	# bindsym mod4+s [title="^Sup ::"] scratchpad show
+	
+	# Lock screen
+	bindsym $mod+x $exec lockscript $wallpaper_lock
+	
+	# Shutdown dmenu
+	bindsym $mod+Shift+x $exec dshutdown
+	
+	# Lauch programs
+	bindsym $mod+Shift+w $exec firefox
+	# bindsym $mod+Shift+w $exec [ $(ps h -C firefox | wc -l) = 0 ] && i3-msg workspace 2 && firefox, \
+						 # $exec [ $(ps h -C firefox | wc -l) = 1 ] && firefox
+	bindsym $mod+Shift+f $exec $term1 -e vifm
+	
+	# Dunst test
+	# bindsym $mod+u $exec dtest
+	
+	# Display time and date popup
+	bindsym $mod+t $exec timepop
+	
+	# Display calendar as notification
+	bindsym $mod+Shift+t $exec calpop
+	
+	# Select config file to edit
+	bindsym $mod+e $exec editfile log.dotfiles
+	
+	# Update config files for editing
+	bindsym $mod+Shift+e $exec editfile -u ~/.config log.dotfiles
+	bindsym $mod+Control+e $exec editfile -u ~/bin -f "-executable -printf %p\n" log.scripts

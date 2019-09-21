@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+TIME=2500
+APP="Time"
+FORMAT="%H:%M, %A %d %B de %Y"
+
+notify-send --expire-time="$TIME" \
+			--app-name="$APP" \
+			"$(date +"$FORMAT")"

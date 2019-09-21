@@ -1,0 +1,55 @@
+#!/usr/bin/env sh
+
+# fontinstall is a simple script that automates the commands needed to
+# install a downloaded true typeface font into the system.
+
+PATH_FONTS="/usr/share/fonts"
+PATH_FONTFILE="/home/cotri/Descargas"
+
+# Check sudo priviledges
+if [ "$EUID" -ne 0 ]; then
+	echo "This script must be run as root!"
+	exit 1
+fi
+
+echo -e "Font files present in ~/Descargas:\n"
+ls --color -1 "$PATH_FONTFILE" | grep --color .otf
+
+read -p "Enter the font file name: " font
+font+=".otf"
+
+# As long as the font file is not found
+while [ ! -f "$PATH_FONTFILE/$font" ]; do
+	echo -e "\n[WARNING] Font file not found in the default path (~/Descargas)!"
+	read -p "Did you misspelled it? (y/n): " miss
+
+	if [ "$miss" = "y" ] || [ "$miss" = "" ] ; then
+		read -p "Please enter the font file name... again: " font
+	elif [ "$miss" = "n" ]; then
+		read -p "Please specify the new path: " PATH_FONTFILE
+	else
+		echo "Get outta here! ¬¬"
+		exit 1
+	fi
+done
+
+# Print font folders
+echo -ne "\nAlready existing font folders:\n"
+ls --color -1 "$PATH_FONTS"
+echo
+
+# Create/Select font folder
+read -p "Enter font directory name: " DIR_FONT
+
+if [ ! -d "$PATH_FONTS/$DIR_FONT" ]; then
+	sudo mkdir "$PATH_FONTS/$DIR_FONT"
+fi
+
+# Move font files to font directory
+sudo mv "$PATH_FONTFILE/$font" "$PATH_FONTS/$DIR_FONT"
+
+# Build font information caches
+fc-cache --force --verbose && echo "Done!"
+
+# Make sure the font exists
+# fc-list | grep $font

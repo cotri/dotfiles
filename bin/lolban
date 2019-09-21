@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# Taken from budrich (budlabs YT channel). Great channel, cool guy.
+
+# Budlabs :: 3d.flf
+# Hex DSL :: ANSI\ Shadow.flf
+
+font="ANSI Shadow.flf"
+
+toilet -f "$font" "$1" | lolcat

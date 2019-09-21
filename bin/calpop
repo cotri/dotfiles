@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+APP="Calendar"
+
+dunstify --appname="$APP" \
+		 --block \
+		 "$(cal)" 

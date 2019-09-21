@@ -1,0 +1,62 @@
+#!/usr/bin/env sh
+
+show_help () {
+cat << EOF
+
+This script ...
+
+Use: editfile [OPTIONS] [LOGFILE]
+
+Help options:
+  -h, -\?		Shows this help mesage and exits
+
+Options:
+  -f [EXP]		Arguments for finding desired files
+  -u [SEARCH PATH]	Update logfile providing the search directory
+
+EOF
+}
+
+get_files () {
+	find "$1" -maxdepth 2 -type f $2
+}
+
+# Resent getopts
+OPTIND=1
+
+LOGFILE_PATH="$HOME/.cache"
+DMENU="dmenu -i -fn 'pango:UbuntuMono Nerd Font Mono:size=11' \
+			 -nb '#161616' -nf '#f1ebeb' -p 'Select file:'"
+EDITOR="nvim"
+update=0
+find_args=""
+
+while getopts "h?qf:u:" opt; do
+	case "$opt" in
+		h|\?) show_help && exit 0
+		;;
+		f) find_args="$OPTARG"
+		;;
+		u) update=1 && FILES_PATH="$OPTARG"
+		;;
+	esac
+done
+
+shift $((OPTIND-1))
+
+logfile="${@}"
+
+# Default find arguments if not specified
+[ -z "$find_args" ] && find_args="-name *conf* -printf %p\n -or \
+	-name *init* -printf %p\n -or \
+	-name *rc -printf %p\n"
+ 
+# Update the logfile if specified to
+[ $update -eq 1 ] && get_files "$FILES_PATH" "$find_args" > "$LOGFILE_PATH/$logfile"
+
+# Get files' names of the desired logfile
+file_names=$(cat "$LOGFILE_PATH/$logfile" | rev | cut -d "/" -f2 | rev)
+
+choice=$(echo "$file_names" | eval $DMENU)
+
+[ "$choice" ] && "$TERMINAL" -e "$EDITOR" "$(grep "$choice/" "$LOGFILE_PATH/$logfile")"

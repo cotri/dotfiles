@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# Shutdown menu using dmenu.
+
+DMENU="dmenu -i -fn 'pango:UbuntuMono Nerd Font Mono:size=11' \
+			 -nb '#161616' -nf '#f1ebeb' -p 'What do you want to do?'"
+choice=$(echo -e " Logout\n Shutdown\n Reboot\n Suspend\n Hibernate" | eval $DMENU)
+# 
+case "$choice" in
+	' Logout')		i3-msg exit & ;;
+  	' Shutdown')	shutdown -h now & ;;
+  	' Reboot')		shutdown -r now & ;;
+  	' Suspend')	pm-suspend & ;;
+  	' Hibernate')	pm-hibernate & ;;
+esac

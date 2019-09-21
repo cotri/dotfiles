@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+# lockscript serves as a wraper script for multimonlock to be able to turn off
+# the screen once the system is locked by changing the energy control settings.
+# (The time in seconds the screen holds idle before turnning off)
+
+revert() {
+	xset dpms 60
+}
+
+#trap revert
+xset dpms 4
+multimonlock -i "$1"
+revert

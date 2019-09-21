@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# a(uto)script automates the creation of empty bash scripts making them
+# executable prior to their edition. If the script is already created and
+# lies upon the specified "scripts directory" ascript will open it.
+# Credits: https://github.com/budlabs
+
+SCRIPT_FOLDER="$HOME/bin"
+SCRIPT_FILE="$SCRIPT_FOLDER/$1"
+HASHBANG="#!/usr/bin/env bash"
+EDITOR="nvim"
+
+if [ -f $SCRIPT_FILE ]; then
+	$EDITOR $SCRIPT_FILE
+else
+	echo "$HASHBANG" > $SCRIPT_FILE
+	chmod +x $SCRIPT_FILE
+	$EDITOR $SCRIPT_FILE
+fi
